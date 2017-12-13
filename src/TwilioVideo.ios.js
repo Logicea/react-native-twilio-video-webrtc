@@ -113,6 +113,8 @@ export default class extends Component {
     this._subscriptions = []
     this._eventEmitter = new NativeEventEmitter(TWVideoModule)
 
+    this.startLocalVideo = this.startLocalVideo.bind(this)
+    this.startLocalAudio = this.startLocalVideo.bind(this)
     this.setLocalVideoEnabled = this.setLocalVideoEnabled.bind(this)
     this.setLocalAudioEnabled = this.setLocalAudioEnabled.bind(this)
     this.flipCamera = this.flipCamera.bind(this)
@@ -121,15 +123,15 @@ export default class extends Component {
   }
 
   componentWillMount () {
-    this._registerEvents()
-    this._startLocalVideo()
-    this._startLocalAudio()
+    this.registerEvents()
+    // this._startLocalVideo()
+    // this._startLocalAudio()
   }
 
   componentWillUnmount () {
-    this._unregisterEvents()
-    this._stopLocalVideo()
-    this._stopLocalAudio()
+    this.unregisterEvents()
+    this.stopLocalVideo()
+    this.stopLocalAudio()
   }
 
   /**
@@ -169,29 +171,29 @@ export default class extends Component {
     TWVideoModule.disconnect()
   }
 
-  _startLocalVideo () {
+  startLocalVideo () {
     const screenShare = this.props.screenShare || false
     TWVideoModule.startLocalVideo(screenShare)
   }
 
-  _stopLocalVideo () {
+  stopLocalVideo () {
     TWVideoModule.stopLocalVideo()
   }
 
-  _startLocalAudio () {
+  startLocalAudio () {
     TWVideoModule.startLocalAudio()
   }
 
-  _stopLocalAudio () {
+  stopLocalAudio () {
     TWVideoModule.stopLocalAudio()
   }
 
-  _unregisterEvents () {
+  unregisterEvents () {
     this._subscriptions.forEach(e => e.remove())
     this._subscriptions = []
   }
 
-  _registerEvents () {
+  registerEvents () {
     this._subscriptions = [
       this._eventEmitter.addListener('roomDidConnect', (data) => {
         if (this.props.onRoomDidConnect) { this.props.onRoomDidConnect(data) }
