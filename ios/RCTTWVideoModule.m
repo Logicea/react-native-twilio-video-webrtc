@@ -24,7 +24,7 @@ static NSString* participantEnabledTrack      = @"participantEnabledTrack";
 static NSString* participantDisabledTrack     = @"participantDisabledTrack";
 
 static NSString* cameraDidStart               = @"cameraDidStart";
-static NSString* cameraWasInterrupted        = @"cameraWasInterrupted";
+static NSString* cameraWasInterrupted         = @"cameraWasInterrupted";
 static NSString* cameraDidStopRunning         = @"cameraDidStopRunning";
 
 
@@ -67,6 +67,14 @@ RCT_EXPORT_MODULE();
   ];
 }
 
+- (void)addLocalSharingView:(UIView*)sharingView rendererView:(TVIVideoView*)renderer {
+    
+    [self stopLocalVideo];
+    self.screen = [[TVIScreenCapturer alloc] initWithView:sharingView];
+    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints]];
+    [self.localVideoTrack addRenderer:renderer];
+}
+
 - (void)addLocalView:(TVIVideoView *)view {
   [self.localVideoTrack addRenderer:view];
   if (self.camera && self.camera.source == TVICameraCaptureSourceBackCameraWide) {
@@ -80,7 +88,7 @@ RCT_EXPORT_MODULE();
   [self.localVideoTrack removeRenderer:view];
 }
 
-- (void)removeParticipantView:(TVIVideoView *)view identity:(NSString *)identity  trackId:(NSString *)trackId {
+- (void)removeParticipantView:(TVIVideoView *)view identity:(NSString *)identity trackId:(NSString *)trackId {
   // TODO: Implement this nicely
 }
 
@@ -97,18 +105,14 @@ RCT_EXPORT_MODULE();
   }
 }
 
-RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
-  if (screenShare) {
-    UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    self.screen = [[TVIScreenCapturer alloc] initWithView:rootViewController.view];
-
-    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints]];
-  } else if ([TVICameraCapturer availableSources].count > 0) {
-    self.camera = [[TVICameraCapturer alloc] init];
-    self.camera.delegate = self;
-
-    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints]];
-  }
+RCT_EXPORT_METHOD(startLocalVideo) {
+  
+    if ([TVICameraCapturer availableSources].count > 0) {
+        
+        self.camera = [[TVICameraCapturer alloc] init];
+        self.camera.delegate = self;
+        self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints]];
+    }
 }
 
 RCT_EXPORT_METHOD(startLocalAudio) {

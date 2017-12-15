@@ -173,7 +173,8 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
             if (thumbnailVideoView != null && localVideoTrack != null) {
                 localVideoTrack.addRenderer(thumbnailVideoView);
             }
-            setThumbnailMirror();
+            // FIX: commented out this line so that mirroring issue is fixed on Android app
+//            setThumbnailMirror();
         }
         connectToRoom();
     }

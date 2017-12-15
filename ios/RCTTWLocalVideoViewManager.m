@@ -20,8 +20,13 @@ RCT_EXPORT_MODULE()
 - (UIView *)view {
   UIView *container = [[UIView alloc] init];
   TVIVideoView *inner = [[TVIVideoView alloc] init];
-  inner.contentMode = UIViewContentModeScaleAspectFill;
-  [container addSubview:inner];
+  inner.frame = CGRectZero;
+  inner.tag = 1;
+  UIView *sharingView = [[UIView alloc] init];
+  sharingView.contentMode = UIViewContentModeScaleAspectFill;
+  inner.frame = container.frame;
+  sharing.tag = 2;
+  [container addSubview:sharingView];
   return container;
 }
 
@@ -31,9 +36,9 @@ RCT_CUSTOM_VIEW_PROPERTY(enabled, BOOL, TVIVideoView) {
     BOOL isEnabled = [RCTConvert BOOL:json];
 
     if (isEnabled) {
-      [videoModule addLocalView:view.subviews[0]];
+      [videoModule addLocalView:[view viewWithTag:2] rendererView:[view viewWithTag:1]];
     } else {
-      [videoModule removeLocalView:view.subviews[0]];
+      [videoModule removeLocalView:[view viewWithTag:1]];
     }
   }
 }

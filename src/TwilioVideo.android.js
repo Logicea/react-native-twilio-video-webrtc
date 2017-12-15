@@ -103,6 +103,15 @@ class CustomTwilioVideoView extends Component {
     this.runCommand(nativeEvents.toggleSound, [enabled])
   }
 
+  startLocalVideo () {
+
+  }
+
+  startLocalAudio () {
+
+    
+  }
+
   runCommand (event, args) {
     switch (Platform.OS) {
       case 'android':
