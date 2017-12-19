@@ -35,6 +35,7 @@ static NSString* cameraDidStopRunning         = @"cameraDidStopRunning";
 @property (strong, nonatomic) TVILocalVideoTrack* localVideoTrack;
 @property (strong, nonatomic) TVILocalAudioTrack* localAudioTrack;
 @property (strong, nonatomic) TVIRoom *room;
+@property (nonatomic) BOOL isSharing;
 
 @end
 
@@ -67,16 +68,24 @@ RCT_EXPORT_MODULE();
   ];
 }
 
-- (void)addLocalSharingView:(UIView*)sharingView rendererView:(TVIVideoView*)renderer {
-    
+- (void)addLocalSharingView:(UIView*)sharingView {
+    self.isSharing = YES;
     [self stopLocalVideo];
     self.screen = [[TVIScreenCapturer alloc] initWithView:sharingView];
     self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints]];
-    [self.localVideoTrack addRenderer:renderer];
+}
+
+- (void)removeLocalSharingView {
+    self.isSharing = NO;
+    [self stopLocalVideo];
+    [self startLocalVideo];
 }
 
 - (void)addLocalView:(TVIVideoView *)view {
   [self.localVideoTrack addRenderer:view];
+  if(self.isSharing) {
+      view.alpha = 0.0;
+  }
   if (self.camera && self.camera.source == TVICameraCaptureSourceBackCameraWide) {
     view.mirror = NO;
   } else {
@@ -107,11 +116,14 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(startLocalVideo) {
   
-    if ([TVICameraCapturer availableSources].count > 0) {
+    if (!self.isSharing) {
         
+      if ([TVICameraCapturer availableSources].count > 0) {
         self.camera = [[TVICameraCapturer alloc] init];
         self.camera.delegate = self;
+        
         self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints]];
+      }
     }
 }
 
@@ -122,6 +134,7 @@ RCT_EXPORT_METHOD(startLocalAudio) {
 RCT_EXPORT_METHOD(stopLocalVideo) {
   self.localVideoTrack = nil;
   self.camera = nil;
+  self.screen = nil;
 }
 
 RCT_EXPORT_METHOD(stopLocalAudio) {

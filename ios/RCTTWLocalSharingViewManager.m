@@ -18,10 +18,9 @@
 RCT_EXPORT_MODULE()
 
 - (UIView *)view {
-  UIView *container = [[UIView alloc] init];
-  UIView *inner = [[UIView alloc] init];
-  inner.contentMode = UIViewContentModeScaleAspectFill;
-  [container addSubview:inner];
+  UIView *container = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  container.backgroundColor = [UIColor clearColor];
+  container.contentMode = UIViewContentModeScaleAspectFill;
   return container;
 }
 
@@ -31,9 +30,9 @@ RCT_CUSTOM_VIEW_PROPERTY(enabled, BOOL, UIView) {
     BOOL isEnabled = [RCTConvert BOOL:json];
 
     if (isEnabled) {
-      [videoModule addLocalSharingView:view.subviews[0]];
+      [videoModule addLocalSharingView:view];
     } else {
-      [videoModule removeLocalView:view.subviews[0]];
+      [videoModule removeLocalSharingView];
     }
   }
 }

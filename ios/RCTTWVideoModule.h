@@ -11,11 +11,11 @@
 
 #import <TwilioVideo/TwilioVideo.h>
 #import <UIKit/UIKit.h>
-#import "UIView+React.h"
 
 @interface RCTTWVideoModule : RCTEventEmitter <RCTBridgeModule>
 
-- (void)addLocalSharingView:(UIView*)sharingView rendererView:(TVIVideoView*)renderer;
+- (void)addLocalSharingView:(UIView*)sharingView;
+- (void)removeLocalSharingView;
 - (void)addLocalView:(TVIVideoView *)view;
 - (void)removeLocalView:(TVIVideoView *)view;
 - (void)addParticipantView:(TVIVideoView *)view identity:(NSString *)identity trackId:(NSString *)trackId;

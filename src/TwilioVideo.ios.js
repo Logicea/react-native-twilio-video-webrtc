@@ -120,12 +120,16 @@ export default class extends Component {
 
   componentWillMount () {
     this.registerEvents()
+    // At this point, we do not want the component to enable streaming the moment it mounts. We need to control this.
+
     // this._startLocalVideo()
     // this._startLocalAudio()
   }
 
   componentWillUnmount () {
     this.unregisterEvents()
+
+    // We do want to stop video and audio once the component unmounts. Probably. Need to discuss/investigate this.
     this.stopLocalVideo()
     this.stopLocalAudio()
   }
@@ -168,8 +172,7 @@ export default class extends Component {
   }
 
   startLocalVideo () {
-    const screenShare = this.props.screenShare || false
-    TWVideoModule.startLocalVideo(screenShare)
+    TWVideoModule.startLocalVideo()
   }
 
   stopLocalVideo () {
