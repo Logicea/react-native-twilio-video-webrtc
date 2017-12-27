@@ -19,7 +19,7 @@ class TwilioVideoLocalView extends Component {
   }
 
   componentWillUnmount () {
-    console.tron.display({ name: 'DEBUG', important: true, preview: '_onRoomDidConnect:', value: 'TwilioVideoLocalView' })
+    console.tron.display({ name: 'DEBUG', important: true, preview: 'componentWillUnmount: TwilioVideoLocalView', value: 'TwilioVideoLocalView' })
     this.enabled = false
   }
 

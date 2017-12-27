@@ -19,7 +19,7 @@ class TwilioSharingLocalView extends Component {
   }
 
   componentWillUnmount () {
-    console.tron.display({ name: 'DEBUG', important: true, preview: '_onRoomDidConnect:', value: 'TwilioSharingLocalView' })
+    console.tron.display({ name: 'DEBUG', important: true, preview: 'componentWillUnmount: TwilioSharingLocalView', value: 'TwilioSharingLocalView' })
     this.enabled = false
   }
 
