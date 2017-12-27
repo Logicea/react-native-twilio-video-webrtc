@@ -18,6 +18,11 @@ class TwilioVideoLocalView extends Component {
     enabled: PropTypes.bool.isRequired
   }
 
+  componentWillUnmount () {
+    console.tron.display({ name: 'DEBUG', important: true, preview: '_onRoomDidConnect:', value: 'TwilioVideoLocalView' })
+    this.enabled = false
+  }
+
   render () {
     return <RCTTWLocalVideoView {...this.props}>{this.props.children}</RCTTWLocalVideoView>
   }

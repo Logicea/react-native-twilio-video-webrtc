@@ -35,6 +35,7 @@ static NSString* cameraDidStopRunning         = @"cameraDidStopRunning";
 @property (strong, nonatomic) TVILocalVideoTrack* localVideoTrack;
 @property (strong, nonatomic) TVILocalAudioTrack* localAudioTrack;
 @property (strong, nonatomic) TVIRoom *room;
+@property (strong, nonatomic) TVIVideoView *sharingRenderer;
 @property (nonatomic) BOOL isSharing;
 
 @end
@@ -69,19 +70,26 @@ RCT_EXPORT_MODULE();
 }
 
 - (void)addLocalSharingView:(UIView*)sharingView {
-    self.isSharing = YES;
     [self stopLocalVideo];
+    self.isSharing = YES;
     self.screen = [[TVIScreenCapturer alloc] initWithView:sharingView];
     self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints]];
+    self.sharingRenderer = [[TVIVideoView alloc] init];
+    self.sharingRenderer.alpha = 0.0;
+    [self.localVideoTrack addRenderer:self.sharingRenderer];
 }
 
 - (void)removeLocalSharingView {
-    self.isSharing = NO;
     [self stopLocalVideo];
-    [self startLocalVideo];
 }
 
 - (void)addLocalView:(TVIVideoView *)view {
+    if(self.localVideoTrack) {
+        [self.localVideoTrack removeRenderer: self.sharingRenderer];
+        self.isSharing = NO;
+    } else {
+        [self stopLocalVideo];
+    }
     if (!self.isSharing) {
         if ([TVICameraCapturer availableSources].count > 0) {
             self.camera = [[TVICameraCapturer alloc] init];
@@ -91,13 +99,12 @@ RCT_EXPORT_MODULE();
         }
     }
     [self.localVideoTrack addRenderer:view];
-    if(self.isSharing) {
-        view.alpha = 0.0;
-    }
-    if (self.camera && self.camera.source == TVICameraCaptureSourceBackCameraWide) {
-        view.mirror = NO;
-    } else {
-        view.mirror = YES;
+    if(!self.isSharing) {
+        if (self.camera && self.camera.source == TVICameraCaptureSourceBackCameraWide) {
+            view.mirror = NO;
+        } else {
+            view.mirror = YES;
+        }
     }
 }
 
@@ -143,6 +150,9 @@ RCT_EXPORT_METHOD(stopLocalAudio) {
 
 RCT_REMAP_METHOD(setLocalAudioEnabled, enabled:(BOOL)enabled setLocalAudioEnabledWithResolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject) {
+    if (!self.localAudioTrack) {
+        [self startLocalAudio];
+    }
     [self.localAudioTrack setEnabled:enabled];
     
     resolve(@(enabled));

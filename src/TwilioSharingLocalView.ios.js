@@ -18,6 +18,11 @@ class TwilioSharingLocalView extends Component {
     enabled: PropTypes.bool.isRequired
   }
 
+  componentWillUnmount () {
+    console.tron.display({ name: 'DEBUG', important: true, preview: '_onRoomDidConnect:', value: 'TwilioSharingLocalView' })
+    this.enabled = false
+  }
+
   render () {
     return <RCTTWLocalSharingView {...this.props}>{this.props.children}</RCTTWLocalSharingView>
   }
